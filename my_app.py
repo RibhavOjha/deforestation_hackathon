@@ -16,23 +16,6 @@ m.add_child(fl.LatLngPopup())
 
 map = st_folium(m, height=350, width=700)
 
-
-
-
-
-# Create a map using st.map
-# Replace the default coordinates with the location of interest
-# For example, you can use the coordinates of a forest area
-# Here, we use a sample location in the Amazon Rainforest
-# Create a map using st.map
-# Replace the default coordinates with the location of interest
-# For example, you can use the coordinates of a forest area
-# Here, we use a sample location in the Amazon Rainforest
-# map_data = [{'latitude': -3.4653, 'longitude': -62.2159}]
-# st.map(map_data)
-
-
-
 # Function to make predictions based on the location
 def make_prediction_on_click(latitude, longitude):
     # Replace this with your machine learning model
@@ -46,9 +29,4 @@ if st.button('Click on the Map to Get Prediction'):
 
     if data is not None:
         st.write(data)
-    # click_data = st.pydeck_chart()
-    # click_data = st.session_state.pydeck_viewport
-    # latitude = click_data['latitude']
-    # longitude = click_data['longitude']
-    # prediction = make_prediction_on_click(latitude, longitude)
-    # st.write(f'Prediction for location {latitude}, {longitude}: {prediction}')
+
