@@ -226,4 +226,4 @@ if st.button('Click on the Map to Get Historical Data'):
     
     except Exception as e:
         st.write(f"Data not found for the specified country. Please try other countries")
-        st.write(e)
+        # st.write(e)
