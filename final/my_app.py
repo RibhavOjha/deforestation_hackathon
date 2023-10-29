@@ -86,6 +86,13 @@ def get_country_prediction(name, year):
     print("predicted forest area is:", prediction)
     return prediction.tolist()[0][0]
 
+def get_country_for_graph(name):
+    df_country = df[df['country_name']==name]
+    # print(df_country)
+    return df_country
+
+get_country_for_graph("India")
+
 
 geolocator = Nominatim(user_agent="bytescout", timeout=None)
 
@@ -147,12 +154,12 @@ map = st_folium(m, height=350, width=700)
 
 user_year = st.text_input("Enter year to be predicted within the next 5 years")
 
-# Function to make predictions based on the location
-def make_prediction_on_click(latitude, longitude):
-    # Replace this with your machine learning model
-    # Perform the prediction based on the clicked location
-    prediction = "Deforestation"  # Replace with your actual prediction logic
-    return prediction
+# # Function to make predictions based on the location
+# def make_prediction_on_click(latitude, longitude):
+#     # Replace this with your machine learning model
+#     # Perform the prediction based on the clicked location
+#     prediction = "Deforestation"  # Replace with your actual prediction logic
+#     return prediction
 
 # Get the latitude and longitude when the user clicks on the map
 if st.button('Click on the Map to Get Prediction'):
@@ -162,7 +169,7 @@ if st.button('Click on the Map to Get Prediction'):
         else:
             user_year = int(user_year)
             current_year = datetime.now().year
-            if (user_year <= current_year) or (user_year > (current_year + 5)):
+            if (user_year < current_year) or (user_year > (current_year + 5)):
                 st.write('Please enter a year within the next 5 years')
             else:
                 
@@ -178,6 +185,45 @@ if st.button('Click on the Map to Get Prediction'):
                 country = address.get('country', '')
                 st.write(country)
                 predicted_percentage = get_country_prediction(country,user_year)
-                st.write("The predicted forest percentage in {country} in {year} is {per}".format(country=country, year=user_year, per=predicted_percentage))
+                percentage1=round(predicted_percentage,2)
+                st.write("The predicted forest percentage in {country} in {year} is {per} %".format(country=country, year=user_year, per=percentage1))
+     
     except Exception as e:
         st.write(f"Data not found for the specified country. Please try other countries")
+    
+if st.button('Click on the Map to Get Historical Data'):
+    try:
+        if not user_year.isdigit():
+            st.write("Please enter numerical value")
+        else:
+            user_year = int(user_year)
+            current_year = datetime.now().year
+            if (user_year > 2016):
+                st.write('Please enter a previous year')
+            else:
+                
+                data = get_pos(map['last_clicked']['lat'],map['last_clicked']['lng'])
+
+                # if data is not None:
+                #     st.write(data)
+                
+                geolocator = Nominatim(user_agent="geoapiExercises")
+                coord = data
+                location = geolocator.reverse(coord, exactly_one=True, language='en')
+                address = location.raw['address']
+                country = address.get('country', '')
+                st.write(country)
+                predicted_percentage = get_country_prediction(country,user_year)
+                percentage1=round(predicted_percentage,2)
+                st.write("The historical forest percentage in {country} in {year} is {per} %".format(country=country, year=user_year, per=percentage1))
+                country_data = get_country_for_graph(country)
+                import plotly.express as px
+
+                # st.line_chart(data=country_data, x='year', y='forest_area_percentage', use_container_width=True)
+                # Create a line chart with sensible year scale
+                fig = px.line(country_data, x='year', y='forest_area_percentage', title='Forest Area Percentage Over the Years')
+                st.plotly_chart(fig, use_container_width=True)
+    
+    except Exception as e:
+        st.write(f"Data not found for the specified country. Please try other countries")
+        st.write(e)
